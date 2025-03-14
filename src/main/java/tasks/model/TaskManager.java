@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class TaskList implements Iterable<Task>, Serializable  {
+public abstract class TaskManager implements Iterable<Task>, Serializable  {
     public abstract void add(Task task);
     public abstract boolean remove(Task task);
     public abstract int size();
@@ -14,8 +14,8 @@ public abstract class TaskList implements Iterable<Task>, Serializable  {
 
     public abstract Iterator<Task> iterator();
 
-    public TaskList incoming(Date from, Date to){
-        TaskList incomingTasks;
+    public TaskManager incoming(Date from, Date to){
+        TaskManager incomingTasks;
         if (this instanceof ArrayTaskList){
             incomingTasks = new ArrayTaskList();
         }

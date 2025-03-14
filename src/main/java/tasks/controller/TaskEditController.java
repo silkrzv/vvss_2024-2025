@@ -22,18 +22,18 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 
-public class NewEditController {
+public class TaskEditController {
 
     private static Button clickedButton;
 
-    private static final Logger log = Logger.getLogger(NewEditController.class.getName());
+    private static final Logger log = Logger.getLogger(TaskEditController.class.getName());
 
     public static void setClickedButton(Button clickedButton) {
-        NewEditController.clickedButton = clickedButton;
+        TaskEditController.clickedButton = clickedButton;
     }
 
     public static void setCurrentStage(Stage currentStage) {
-        NewEditController.currentStage = currentStage;
+        TaskEditController.currentStage = currentStage;
     }
 
     private static Stage currentStage;
@@ -81,19 +81,13 @@ public class NewEditController {
                 break;
             case "btnEdit" : initEditWindow("Edit Task");
                 break;
+            default: log.error("no button was clicked");
         }
     }
 
     @FXML
     public void initialize(){
         log.info("new/edit window initializing");
-//        switch (clickedButton.getId()){
-//            case  "btnNew" : initNewWindow("New Task");
-//                break;
-//            case "btnEdit" : initEditWindow("Edit Task");
-//                break;
-//        }
-
     }
     private void initNewWindow(String title){
         currentStage.setTitle(title);
@@ -203,7 +197,7 @@ public class NewEditController {
         }
         boolean isActive = checkBoxActive.isSelected();
         result.setActive(isActive);
-        System.out.println(result);
+        log.info(result);
         return result;
     }
 

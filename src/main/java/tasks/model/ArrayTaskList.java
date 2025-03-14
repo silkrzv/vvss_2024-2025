@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 
 import java.util.*;
 
-public class ArrayTaskList extends TaskList{
+public class ArrayTaskList extends TaskManager {
 
     private Task[] tasks;
     private int numberOfTasks;
@@ -50,31 +50,27 @@ public class ArrayTaskList extends TaskList{
     }
 
     @Override
-    public void add(Task task){
-        if (task.equals(null)) throw new NullPointerException("Task shouldn't be null");
-        if (numberOfTasks == currentCapacity-1){
-            currentCapacity = currentCapacity * 2;
-            Task[] withAddedTask = new Task[currentCapacity];
-            System.arraycopy(tasks,0,withAddedTask,0,tasks.length);
-            this.tasks = withAddedTask;
+    public void add(Task task) {
+        if (task == null) { // Fix C01
+            throw new IllegalArgumentException("Task cannot be null");
         }
-        this.tasks[numberOfTasks] = task;
-        this.numberOfTasks++;
+        if (numberOfTasks == tasks.length) {
+            tasks = Arrays.copyOf(tasks, tasks.length * 2);
+        }
+        tasks[numberOfTasks++] = task;
     }
+
     @Override
-    public boolean remove(Task task){
-        int indexOfTaskToDelete = -1;
-        for(int i = 0; i < tasks.length; i++){
-            if (task.equals(tasks[i])){
-                indexOfTaskToDelete = i;
-                break;
-            }
+    public boolean remove(Task task) {
+        if (task == null) { // Fix C02
+            return false;
         }
-        if (indexOfTaskToDelete >= 0){
-            this.numberOfTasks--;
-            System.arraycopy(tasks, indexOfTaskToDelete+1,tasks,indexOfTaskToDelete,
-                    numberOfTasks-indexOfTaskToDelete+1);
-            return true;
+        for (int i = 0; i < numberOfTasks; i++) {
+            if (task.equals(tasks[i])) {
+                System.arraycopy(tasks, i + 1, tasks, i, numberOfTasks - i - 1);
+                tasks[--numberOfTasks] = null;
+                return true;
+            }
         }
         return false;
     }
@@ -83,13 +79,10 @@ public class ArrayTaskList extends TaskList{
         return this.numberOfTasks;
     }
     @Override
-    public Task getTask(int index){
-        if (index < 0 || index > size()-1) {
-            log.error("not existing index");
-            throw new IndexOutOfBoundsException("Index not found");
+    public Task getTask(int index) {
+        if (index < 0 || index >= numberOfTasks) { // Fix C06
+            throw new IndexOutOfBoundsException("Index out of range");
         }
-
-
         return tasks[index];
     }
 

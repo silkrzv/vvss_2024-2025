@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Task implements Serializable, Cloneable {
+public class Task implements Serializable {
     private String title;
     private Date time;
     private Date start;
@@ -21,6 +21,7 @@ public class Task implements Serializable, Cloneable {
     public static SimpleDateFormat getDateFormat(){
         return sdf;
     }
+
     public Task(String title, Date time){
         if (time.getTime() < 0) {
             log.error("time below bound");
@@ -171,13 +172,13 @@ public class Task implements Serializable, Cloneable {
                 ", active=" + active +
                 '}';
     }
-    @Override
-    protected Task clone() throws CloneNotSupportedException {
-        Task task  = (Task)super.clone();
-        task.time = (Date)this.time.clone();
-        task.start = (Date)this.start.clone();
-        task.end = (Date)this.end.clone();
-        return task;
+    public Task(Task other) {
+        this.title = other.title;
+        this.time = new Date(other.time.getTime());
+        this.start = new Date(other.start.getTime());
+        this.end = new Date(other.end.getTime());
+        this.interval = other.interval;
+        this.active = other.active;
     }
 }
 

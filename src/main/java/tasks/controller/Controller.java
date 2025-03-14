@@ -83,14 +83,14 @@ public class Controller {
     @FXML
     public void showTaskDialog(ActionEvent actionEvent){
         Object source = actionEvent.getSource();
-        NewEditController.setClickedButton((Button) source);
+        TaskEditController.setClickedButton((Button) source);
 
         try {
             editNewStage = new Stage();
-            NewEditController.setCurrentStage(editNewStage);
+            TaskEditController.setCurrentStage(editNewStage);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/new-edit-task.fxml"));
             Parent root = loader.load();//getClass().getResource("/fxml/new-edit-task.fxml"));
-            NewEditController editCtrl = loader.getController();
+            TaskEditController editCtrl = loader.getController();
             editCtrl.setService(service);
             editCtrl.setTasksList(tasksList);
             editCtrl.setCurrentTask((Task)mainTable.getSelectionModel().getSelectedItem());

@@ -4,7 +4,7 @@ import javafx.collections.ObservableList;
 import org.apache.log4j.Logger;
 import tasks.model.LinkedTaskList;
 import tasks.model.Task;
-import tasks.model.TaskList;
+import tasks.model.TaskManager;
 import tasks.view.*;
 
 import java.io.*;
@@ -15,12 +15,13 @@ import java.util.Date;
 public class TaskIO {
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]");
     private static final String[] TIME_ENTITY = {" day"," hour", " minute"," second"};
-    private static final int secondsInDay = 86400;
-    private static final int secondsInHour = 3600;
-    private static final int secondsInMin = 60;
-
+    private static final int SECONDS_IN_DAY = 86400;
+    private static final int SECONDS_IN_HOUR = 3600;
+    private static final int SECONDS_IN_MIN = 60;
     private static final Logger log = Logger.getLogger(TaskIO.class.getName());
-    public static void write(TaskList tasks, OutputStream out) throws IOException {
+    private static final Object IO_EXCEPTION_MESSAGE = "IO exception reading or writing file";
+
+    public static void write(TaskManager tasks, OutputStream out) throws IOException {
         DataOutputStream dataOutputStream = new DataOutputStream(out);
         try {
             dataOutputStream.writeInt(tasks.size());
@@ -39,10 +40,9 @@ public class TaskIO {
             }
         }
         finally {
-            dataOutputStream.close();
         }
     }
-    public static void read(TaskList tasks, InputStream in)throws IOException {
+    public static void read(TaskManager tasks, InputStream in)throws IOException {
         DataInputStream dataInputStream = new DataInputStream(in);
         try {
             int listLength = dataInputStream.readInt();
@@ -68,34 +68,34 @@ public class TaskIO {
             dataInputStream.close();
         }
     }
-    public static void writeBinary(TaskList tasks, File file)throws IOException{
+    public static void writeBinary(TaskManager tasks, File file)throws IOException{
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(file);
             write(tasks,fos);
         }
         catch (IOException e){
-            log.error("IO exception reading or writing file");
+            log.error(IO_EXCEPTION_MESSAGE);
         }
         finally {
             fos.close();
         }
     }
 
-    public static void readBinary(TaskList tasks, File file) throws IOException{
+    public static void readBinary(TaskManager tasks, File file) throws IOException{
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
             read(tasks, fis);
         }
         catch (IOException e){
-            log.error("IO exception reading or writing file");
+            log.error(IO_EXCEPTION_MESSAGE);
         }
         finally {
             fis.close();
         }
     }
-    public static void write(TaskList tasks, Writer out) throws IOException {
+    public static void write(TaskManager tasks, Writer out) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(out);
         Task lastTask = tasks.getTask(tasks.size()-1);
         for (Task t : tasks){
@@ -107,7 +107,7 @@ public class TaskIO {
 
     }
 
-    public static void read(TaskList tasks, Reader in)  throws IOException {
+    public static void read(TaskManager tasks, Reader in)  throws IOException {
         BufferedReader reader = new BufferedReader(in);
         String line;
         Task t;
@@ -118,20 +118,20 @@ public class TaskIO {
         reader.close();
 
     }
-    public static void writeText(TaskList tasks, File file) throws IOException {
+    public static void writeText(TaskManager tasks, File file) throws IOException {
         FileWriter fileWriter = new FileWriter(file);
         try {
             write(tasks, fileWriter);
         }
         catch (IOException e ){
-            log.error("IO exception reading or writing file");
+            log.error(IO_EXCEPTION_MESSAGE);
         }
         finally {
             fileWriter.close();
         }
 
     }
-    public static void readText(TaskList tasks, File file) throws IOException {
+    public static void readText(TaskManager tasks, File file) throws IOException {
         FileReader fileReader = new FileReader(file);
         try {
             read(tasks, fileReader);
@@ -190,13 +190,13 @@ public class TaskIO {
         int result = 0;
         for (int p = 0; p < timeEntities.length; p++){
             if (timeEntities[p] != 0 && p == 0){
-                result+=secondsInDay*timeEntities[p];
+                result+= SECONDS_IN_DAY *timeEntities[p];
             }
             if (timeEntities[p] != 0 && p == 1){
-                result+=secondsInHour*timeEntities[p];
+                result+= SECONDS_IN_HOUR *timeEntities[p];
             }
             if (timeEntities[p] != 0 && p == 2){
-                result+=secondsInMin*timeEntities[p];
+                result+= SECONDS_IN_MIN *timeEntities[p];
             }
             if (timeEntities[p] != 0 && p == 3){
                 result+=timeEntities[p];
@@ -266,10 +266,10 @@ public class TaskIO {
         if (interval <= 0) throw new IllegalArgumentException("Interval <= 0");
         StringBuilder sb = new StringBuilder();
 
-        int days = interval/secondsInDay;
-        int hours = (interval - secondsInDay*days) / secondsInHour;
-        int minutes = (interval - (secondsInDay*days + secondsInHour*hours)) / secondsInMin;
-        int seconds = (interval - (secondsInDay*days + secondsInHour*hours + secondsInMin*minutes));
+        int days = interval/ SECONDS_IN_DAY;
+        int hours = (interval - SECONDS_IN_DAY *days) / SECONDS_IN_HOUR;
+        int minutes = (interval - (SECONDS_IN_DAY *days + SECONDS_IN_HOUR *hours)) / SECONDS_IN_MIN;
+        int seconds = (interval - (SECONDS_IN_DAY *days + SECONDS_IN_HOUR *hours + SECONDS_IN_MIN *minutes));
 
         int[] time = new int[]{days, hours, minutes, seconds};
         int i = 0, j = time.length-1;
@@ -296,7 +296,7 @@ public class TaskIO {
             TaskIO.writeBinary(taskList, Main.savedTasksFile);
         }
         catch (IOException e){
-            log.error("IO exception reading or writing file");
+            log.error(IO_EXCEPTION_MESSAGE);
         }
     }
 }

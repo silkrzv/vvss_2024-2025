@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static java.util.Objects.isNull;
-public class LinkedTaskList  extends TaskList {
+public class LinkedTaskList  extends TaskManager {
     private static final Logger log = Logger.getLogger(LinkedTaskList.class.getName());
     private class LinkedTaskListIterator implements Iterator<Task>{
         private int cursor;

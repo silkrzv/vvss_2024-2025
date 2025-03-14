@@ -47,8 +47,28 @@ public class TasksService {
     public Iterable<Task> filterTasks(Date start, Date end){
         TasksOperations tasksOps = new TasksOperations(getObservableList());
         Iterable<Task> filtered = tasksOps.incoming(start,end);
-        //Iterable<Task> filtered = tasks.incoming(start, end);
-
         return filtered;
     }
+//    implementare handleTaskError(Task t) : void
+    public void handleTaskError(Task t) {
+        if (t == null) {
+            throw new IllegalArgumentException("Task-ul nu poate fi null.");
+        }
+        if (t.getTitle() == null || t.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("Titlul task-ului nu poate fi gol.");
+        }
+        if (t.isRepeated()) {
+            if (t.getStartTime().after(t.getEndTime())) {
+                throw new IllegalArgumentException("Timpul de început trebuie să fie înainte de timpul de sfârșit pentru un task recurent.");
+            }
+            if (t.getRepeatInterval() <= 0) {
+                throw new IllegalArgumentException("Intervalul de repetare trebuie să fie mai mare decât zero.");
+            }
+        } else {
+            if (t.getTime() == null) {
+                throw new IllegalArgumentException("Timpul unui task non-recurent nu poate fi null.");
+            }
+        }
+    }
+
 }
