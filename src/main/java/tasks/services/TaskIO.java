@@ -6,6 +6,8 @@ import tasks.model.LinkedTaskList;
 import tasks.model.Task;
 import tasks.model.TaskManager;
 import tasks.view.*;
+import org.apache.commons.text.StringEscapeUtils;
+
 
 import java.io.*;
 import java.text.ParseException;
@@ -68,33 +70,24 @@ public class TaskIO {
             dataInputStream.close();
         }
     }
-    public static void writeBinary(TaskManager tasks, File file)throws IOException{
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(file);
-            write(tasks,fos);
-        }
-        catch (IOException e){
-            log.error(IO_EXCEPTION_MESSAGE);
-        }
-        finally {
-            fos.close();
+    public static void writeBinary(TaskManager tasks, File file) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            write(tasks, fos);
+        } catch (IOException e) {
+            log.error(IO_EXCEPTION_MESSAGE, e);
+            throw e; // Propagăm excepția mai sus
         }
     }
 
-    public static void readBinary(TaskManager tasks, File file) throws IOException{
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
+    public static void readBinary(TaskManager tasks, File file) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file)) {
             read(tasks, fis);
-        }
-        catch (IOException e){
-            log.error(IO_EXCEPTION_MESSAGE);
-        }
-        finally {
-            fis.close();
+        } catch (IOException e) {
+            log.error(IO_EXCEPTION_MESSAGE, e);
+            throw e; // Propagăm excepția mai sus
         }
     }
+
     public static void write(TaskManager tasks, Writer out) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(out);
         Task lastTask = tasks.getTask(tasks.size()-1);
@@ -205,30 +198,58 @@ public class TaskIO {
         return result;
     }
 
-    private static Date getDateFromText (String line, boolean isStartTime) {
-        Date date = null;
-        String trimmedDate; //date trimmed from whole string
+//    private static Date getDateFromText (String line, boolean isStartTime) {
+//        Date date = null;
+//        String trimmedDate; //date trimmed from whole string
+//        int start, end;
+//
+//        if (isStartTime) {
+//            start = line.indexOf("[");
+//            end = line.indexOf("]");
+//        } else {
+//            int firstRightBracket = line.indexOf("]");
+//            start = line.indexOf("[", firstRightBracket + 1);
+//            end = line.indexOf("]", firstRightBracket + 1);
+//        }
+//        trimmedDate = line.substring(start, end + 1);
+//        try {
+//            date = simpleDateFormat.parse(trimmedDate);
+//        } catch (ParseException e) {
+//            log.error("date parse exception");
+//        }
+//        return date;
+//    }
+    private static Date getDateFromText(String line, boolean isStartTime) {
+        Date date;
+        String trimmedDate;
         int start, end;
 
-        if (isStartTime){
+        if (isStartTime) {
             start = line.indexOf("[");
             end = line.indexOf("]");
-        }
-        else {
+        } else {
             int firstRightBracket = line.indexOf("]");
-            start = line.indexOf("[", firstRightBracket+1);
-            end = line.indexOf("]", firstRightBracket+1);
+            start = line.indexOf("[", firstRightBracket + 1);
+            end = line.indexOf("]", firstRightBracket + 1);
         }
-        trimmedDate = line.substring(start, end+1);
+
+        // Dacă nu găsim parantezele, returnăm o valoare fallback
+        if (start == -1 || end == -1) {
+            log.error("Data format invalid: paranteze pătrate lipsă în linia '{}'");
+            return new Date(0);
+        }
+
+        trimmedDate = line.substring(start + 1, end); // Eliminăm parantezele pătrate
         try {
             date = simpleDateFormat.parse(trimmedDate);
+        } catch (ParseException e) {
+            log.error("Eroare la parsarea datei '{}' din linia '{}': {}");
+            return new Date(0); // Returnăm o valoare implicită
         }
-        catch (ParseException e){
-            log.error("date parse exception");
-        }
-        return date;
 
+        return date;
     }
+
     private static String getTitleFromText(String line){
         int start = 1;
         int end = line.lastIndexOf("\"");
@@ -239,26 +260,54 @@ public class TaskIO {
 
 
     ////service methods for writing
-    private static String getFormattedTask(Task task){
+//    private static String getFormattedTask(Task task){
+//        StringBuilder result = new StringBuilder();
+//        String title = task.getTitle();
+//        if (title.contains("\"")) title = title.replace("\"","\"\"");
+//        result.append("\"").append(title).append("\"");
+//
+//        if (task.isRepeated()){
+//            result.append(" from ");
+//            result.append(simpleDateFormat.format(task.getStartTime()));
+//            result.append(" to ");
+//            result.append(simpleDateFormat.format(task.getEndTime()));
+//            result.append(" every ").append("[");
+//            result.append(getFormattedInterval(task.getRepeatInterval()));
+//            result.append("]");
+//        }
+//        else {
+//            result.append(" at ");
+//            result.append(simpleDateFormat.format(task.getStartTime()));
+//        }
+//        if (!task.isActive()) result.append(" inactive");
+//        return result.toString().trim();
+//    }
+
+    private static String getFormattedTask(Task task) {
         StringBuilder result = new StringBuilder();
-        String title = task.getTitle();
-        if (title.contains("\"")) title = title.replace("\"","\"\"");
+
+        // Escape pentru caractere speciale în titlu
+        String title = StringEscapeUtils.escapeJava(task.getTitle());
+
         result.append("\"").append(title).append("\"");
 
-        if (task.isRepeated()){
+        if (task.isRepeated()) {
             result.append(" from ");
             result.append(simpleDateFormat.format(task.getStartTime()));
             result.append(" to ");
             result.append(simpleDateFormat.format(task.getEndTime()));
-            result.append(" every ").append("[");
+            result.append(" every [");
             result.append(getFormattedInterval(task.getRepeatInterval()));
             result.append("]");
-        }
-        else {
+        } else {
             result.append(" at ");
             result.append(simpleDateFormat.format(task.getStartTime()));
         }
-        if (!task.isActive()) result.append(" inactive");
+
+        if (!task.isActive()) {
+            result.append(" inactive");
+        }
+
         return result.toString().trim();
     }
 

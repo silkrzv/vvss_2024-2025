@@ -43,7 +43,8 @@ public class Task implements Serializable {
         }
         this.title = title;
         this.start = start;
-        this.end = end;
+        // Dacă end este null, îl vom seta la o dată implicită, de exemplu, data curentă
+        this.end = (end != null) ? end : new Date();  // Dacă end este null, se atribuie data curentă
         this.interval = interval;
         this.time = start;
     }
