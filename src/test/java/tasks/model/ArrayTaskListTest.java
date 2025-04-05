@@ -30,12 +30,12 @@ class ArrayTaskListTest {
     }
 
     @Test
-    @DisplayName("Valid: Add a normal task")
-    void addValidTask() {
+    @DisplayName("Valid: Add a task with title being a string")
+    void TC1_ECP() {
         // Arrange
-        Task task = new Task("Test Task", new Date());
+        Task task = new Task("Test Task", new Date(), new Date(), 4);
 
-        // Act
+        // Act4
         taskList.add(task);
 
         // Assert
@@ -43,91 +43,92 @@ class ArrayTaskListTest {
     }
 
     @Test
-    @DisplayName("Valid: Add a repeating task")
-    void addValidRepeatingTask() {
+    @DisplayName("InValid: Add a task with title being not a string")
+    void TC2_ECP() {
         // Arrange
-        Task task = new Task("Repeating Task", new Date(), new Date(System.currentTimeMillis() + 10000), 5);
+        Task task = new Task(null, new Date(), new Date(), 5);
 
         // Act
         taskList.add(task);
 
         // Assert
-        assertEquals(1, taskList.size(), "Task list should contain one repeating task");
+        assertEquals(0, taskList.size(), "Task should have a title being a string");
     }
 
     @Test
-    @DisplayName("Invalid: Add a null task")
-    void addNullTask() {
-        // Arrange & Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> taskList.add(null));
-        assertEquals("Task cannot be null", exception.getMessage(), "Expected exception message");
-
-        // Motivul invalidității
-        System.out.println("Invalid: Add a null task - " + exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("Invalid: Add duplicate tasks")
-    void addDuplicateTasks() {
+    @DisplayName("InValid: Add two tasks with the same title")
+    void TC3_ECP() {
         // Arrange
-        Task task = new Task("Duplicate Task", new Date());
+        Task task1 = new Task("Duplicate Task", new Date(), new Date(), 5);
+        Task task2 = new Task("Duplicate Task", new Date(), new Date(), 6);
 
         // Act
-        taskList.add(task);
-        taskList.add(task);
+        taskList.add(task1);
+        taskList.add(task2);
 
         // Assert
-        assertEquals(2, taskList.size(), "Task list should allow duplicate tasks");
-
-        // Motivul invalidității (observă că, în cazul nostru, nu există o restricție explicită pentru duplicare)
-        System.out.println("Invalid: Add duplicate tasks - No restriction for duplicates in this implementation.");
+        assertEquals(1, taskList.size(), "Task list shouldn't contain two tasks with the same title");
+        assertEquals("Duplicate Task", taskList.getTask(0).getTitle());
+        assertEquals("Duplicate Task", taskList.getTask(1).getTitle());
+        assertNotSame(taskList.getTask(0), taskList.getTask(1)); // Asigură că sunt instanțe diferite
     }
 
+
     @Test
-    @DisplayName("Valid: Add task at lower boundary")
-    void addTaskAtLowerBoundary() {
+    @DisplayName("Valid: Add a task with title length 254")
+    void TC4_BVA() {
         // Arrange
-        Task task = new Task("Lower Boundary Task", new Date(0));
+        String title = "M".repeat(254); // Creează un titlu de exact 254 caractere
+        Task task = new Task(title, new Date(), new Date(), 5);
 
         // Act
         taskList.add(task);
 
         // Assert
-        assertEquals(1, taskList.size(), "Task list should contain one task at lower boundary");
+        assertEquals(1, taskList.size(), "Task list should contain one task");
+        assertEquals(title, taskList.getTask(0).getTitle());
     }
 
     @Test
-    @DisplayName("Valid: Add task at upper boundary")
-    void addTaskAtUpperBoundary() {
+    @DisplayName("Valid: Add a task with title length 255")
+    void TC5_BVA() {
         // Arrange
-        Task task = new Task("Upper Boundary Task", new Date(Long.MAX_VALUE - 1));
+        String title = "M".repeat(255); // Titlu de exact 255 caractere
+        Task task = new Task(title, new Date(), new Date(), 5);
 
         // Act
         taskList.add(task);
 
         // Assert
-        assertEquals(1, taskList.size(), "Task list should contain one task at upper boundary");
+        assertEquals(1, taskList.size(), "Task list should contain one task");
+        assertEquals(title, taskList.getTask(0).getTitle());
     }
 
     @Test
-    @DisplayName("Invalid: Add task with negative time")
-    void addTaskWithNegativeTime() {
-        // Arrange & Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Task("Negative Time Task", new Date(-1)));
-        assertEquals("Time cannot be negative", exception.getMessage(), "Expected exception message");
+    @DisplayName("Invalid: Add a task with title length 256")
+    void TC6_BVA() {
+        // Arrange
+        String title = "M".repeat(256); // Titlu de exact 256 caractere
+        Task task = new Task(title, new Date(), new Date(), 5);
 
-        // Motivul invalidității
-        System.out.println("Invalid: Add task with negative time - " + exception.getMessage());
+        // Act
+        taskList.add(task);
+
+        // Act & Assert
+        assertEquals(0, taskList.size(), "The task sholdn't have a title length > 255");
     }
 
     @Test
-    @DisplayName("Invalid: Add task with zero interval")
-    void addTaskWithZeroInterval() {
-        // Arrange & Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Task("Zero Interval Task", new Date(), new Date(System.currentTimeMillis() + 10000), 0));
-        assertEquals("interval should me > 1", exception.getMessage(), "Expected exception message");
+    @DisplayName("Invalid: Add a task with title length 0")
+    void TC7_BVA() {
+        // Arrange
+        String title = ""; // Titlu gol
+        Task task = new Task(title, new Date(), new Date(), 5);
 
-        // Motivul invalidității
-        System.out.println("Invalid: Add task with zero interval - " + exception.getMessage());
+        // Act
+        taskList.add(task);
+
+        // Act & Assert
+        assertEquals(0, taskList.size(), "The task sholdn't have a title length < 1");
     }
 }
