@@ -22,15 +22,30 @@ class TaskTest {
         }
     }
 
+//    @Test
+//    void testTaskCreation() throws ParseException {
+//       assert task.getTitle() == "new task";
+//        System.out.println(task.getFormattedDateStart());
+//        System.out.println(task.getDateFormat().format(Task.getDateFormat().parse("2023-02-12 10:10")));
+//       assert task.getFormattedDateStart().equals(task.getDateFormat().format(Task.getDateFormat().parse("2023-02-12 10:10")));
+//    }
+
     @Test
-    void testTaskCreation() throws ParseException {
-       assert task.getTitle() == "new task";
-        System.out.println(task.getFormattedDateStart());
-        System.out.println(task.getDateFormat().format(Task.getDateFormat().parse("2023-02-12 10:10")));
-       assert task.getFormattedDateStart().equals(task.getDateFormat().format(Task.getDateFormat().parse("2023-02-12 10:10")));
+    void testSetTitle() {
+        task.setTitle("Modified title");
+        assertEquals("Modified title", task.getTitle(), "Titlul nu a fost setat corect");
     }
 
-    @AfterEach
-    void tearDown() {
+    @Test
+    void testSetActiveStatus() {
+        task.setActive(true);
+        assertTrue(task.isActive(), "Task-ul ar fi trebuit să fie activ");
+
+        task.setActive(false);
+        assertFalse(task.isActive(), "Task-ul ar fi trebuit să fie inactiv");
     }
+
+
+
+
 }

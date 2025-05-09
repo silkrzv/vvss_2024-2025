@@ -73,7 +73,7 @@ class TasksOperationsTest {
         assertTrue(result.isEmpty());
     }
 
-    @Test
+        @Test
         // Acoperă: SC, DC, CC, MCC, APC
     void testIncoming_inactiveTask_shouldNotBeIncluded() {
         repeatedInactive = new Task("Inactive Repeated", in1Hour, in3Hours, 3600);

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>testspec Proiect235 - lmar2526_IntT</title>
+<link type="text/css" rel="stylesheet" href="https://www.scs.ubbcluj.ro/testlink/gui/themes/default/css/tl_documents.css" />
+<style type="text/css" media="print">.notprintable { display:none;}</style>
+</head>
+<body>
+<div>
+<div style="float:right;">TestLink Community [configure $tlCfg-&gt;document_generator-&gt;company_name]</div>
+<div>&nbsp;</div><hr />
+<p style="text-align: center;"><img alt="TestLink logo" title="configure using $tlCfg->document_generator->company_logo"  width= height= src="https://www.scs.ubbcluj.ro/testlink/gui/themes/default/images/tl-logo-transparent-25.png" /></p></div>
+<div class="doc_title"><p>Test Specification</p></div>
+<div class="doc_title" style="text-align:left;margin: auto;"><p>Test Project: Proiect235<br/>Test Suite: Proiect235 - lmar2526_IntT</p></div>
+<div class="summary"><p id="printedby">Printed by TestLink on 07/05/2025</p></div>
+<div class="pagefooter" id="copyright">2012 &copy; TestLink Community</div>
+<h1 class="general" style="page-break-before: always">Table Of Contents</h1><div class="toc"><p style="padding-left: 20px;"><b><a href="#toc_1">1.lmar2526_IntT</a></b></p>
+<p style="padding-left: 45px;"><a href="#toc_tc26470">Prj235-109: Unit Testing</a></p><p style="padding-left: 45px;"><a href="#toc_tc26472">Prj235-110: Integration S + R with mock E</a></p><p style="padding-left: 45px;"><a href="#toc_tc26474">Prj235-111: Full Integration S + R + E</a></p></div><h1 class="doclevel" >Scope</h1>
+<div class="txtlevel"><p>Proiect de testare pentru studentii din grupa 235.</p></div>
+ <br/><a name='toc_1'></a>
+<h1 class='doclevel'>1.Test Suite : lmar2526_IntT</h1>
+<div><p>Suită pentru testele de integrare</p>
+</div><a name="toc_tc26470"></a><p>&nbsp;</p><div> <table class="tc" width="90%" ><tr><th colspan="4">Test Case Prj235-109: Unit Testing&nbsp;<span style="font-size: 80%;">[Version  : 1]</span></th></tr>
+<tr><td width="20%" valign="top"><span class="label">Author:</span></td><td colspan="3">lmar2526</td></tr>
+<tr><td colspan="4"><span class="label">Summary:</span><br /><p>Testarea unitară &icirc;n izolare a claselor E (Task), R (ArrayTaskList) și S (TasksService)</p>
+</td></tr><tr><td colspan="4"><span class="label">Preconditions:</span><br /><p>Task task = new Task(&quot;Unit test&quot;, new Date());<br />
+ArrayTaskList repo = new ArrayTaskList();<br />
+TasksService service = new TasksService(repo);<br />
+&nbsp;</p>
+</td></tr><tr><td width="20%" valign="top"><span class="label">Execution type:</span></td><td colspan="3">Automated</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Estimated exec. duration (min):</span></td><td colspan="3"></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Importance:</span></td><td colspan="3">Medium</td></tr>
+<tr><td colspan="4"></td></tr><tr><td > name of the autotest class:</td><td  colspan = "3" >tasks.model.TaskTest</td></tr>
+<tr><td > name of the test method:</td><td  colspan = "3" >testSetActiveStatus</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Requirements</span><td colspan="3">lmar2526_F01:  AdaugareTask [Version : 1]<br /></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Keywords:</span></td><td colspan="3">&nbsp;None<br/></td></tr>
+</table>
+</div>
+<a name="toc_tc26472"></a><p>&nbsp;</p><div> <table class="tc" width="90%" ><tr><th colspan="4">Test Case Prj235-110: Integration S + R with mock E&nbsp;<span style="font-size: 80%;">[Version  : 1]</span></th></tr>
+<tr><td width="20%" valign="top"><span class="label">Author:</span></td><td colspan="3">lmar2526</td></tr>
+<tr><td colspan="4"><span class="label">Summary:</span><br /><p>Integrare &icirc;ntre serviciu și repository, folosind mock pentru Task</p>
+</td></tr><tr><td colspan="4"><span class="label">Preconditions:</span><br /><p>ArrayTaskList repo = new ArrayTaskList();<br />
+TasksService service = new TasksService(repo);</p>
+
+<p>Task mockTask = Mockito.mock(Task.class);<br />
+when(mockTask.isActive()).thenReturn(true);<br />
+when(mockTask.nextTimeAfter(any(Date.class))).thenReturn(new Date());</p>
+
+<p>repo.add(mockTask);<br />
+&nbsp;</p>
+</td></tr><tr><td width="20%" valign="top"><span class="label">Execution type:</span></td><td colspan="3">Automated</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Estimated exec. duration (min):</span></td><td colspan="3"></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Importance:</span></td><td colspan="3">Medium</td></tr>
+<tr><td colspan="4"></td></tr><tr><td > name of the autotest class:</td><td  colspan = "3" >tasks.integration.TasksServiceIntegrationMockTaskTest</td></tr>
+<tr><td > name of the test method:</td><td  colspan = "3" >testFilterTasksWithMockedTask</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Requirements</span><td colspan="3">lmar2526_F01:  AdaugareTask [Version : 1]<br /></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Keywords:</span></td><td colspan="3">&nbsp;None<br/></td></tr>
+</table>
+</div>
+<a name="toc_tc26474"></a><p>&nbsp;</p><div> <table class="tc" width="90%" ><tr><th colspan="4">Test Case Prj235-111: Full Integration S + R + E&nbsp;<span style="font-size: 80%;">[Version  : 1]</span></th></tr>
+<tr><td width="20%" valign="top"><span class="label">Author:</span></td><td colspan="3">lmar2526</td></tr>
+<tr><td colspan="4"><span class="label">Summary:</span><br /><p>estarea fluxului complet real folosind clasele Task, ArrayTaskList, TasksService</p>
+</td></tr><tr><td colspan="4"><span class="label">Preconditions:</span><br /><p>SimpleDateFormat df = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm&quot;);</p>
+
+<p>Task t1 = new Task(&quot;RealTask1&quot;, df.parse(&quot;2024-05-10 10:00&quot;));<br />
+t1.setActive(true);</p>
+
+<p>Task t2 = new Task(&quot;RealTask2&quot;, df.parse(&quot;2024-06-01 10:00&quot;));<br />
+t2.setActive(true);</p>
+
+<p>ArrayTaskList repo = new ArrayTaskList();<br />
+repo.add(t1);<br />
+repo.add(t2);</p>
+
+<p>TasksService service = new TasksService(repo);<br />
+&nbsp;</p>
+</td></tr><tr><td width="20%" valign="top"><span class="label">Execution type:</span></td><td colspan="3">Automated</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Estimated exec. duration (min):</span></td><td colspan="3"></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Importance:</span></td><td colspan="3">Medium</td></tr>
+<tr><td colspan="4"></td></tr><tr><td > name of the autotest class:</td><td  colspan = "3" >tasks.integration.TasksServiceIntegrationRealTest</td></tr>
+<tr><td > name of the test method:</td><td  colspan = "3" >testFilterTasksWithRealObjects</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Requirements</span><td colspan="3">lmar2526_F02:  Afisarea task-urilor planificate intr-o perioada de timp [Version : 1]<br /></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Keywords:</span></td><td colspan="3">&nbsp;None<br/></td></tr>
+</table>
+</div>
+
+</body>
+</html>
